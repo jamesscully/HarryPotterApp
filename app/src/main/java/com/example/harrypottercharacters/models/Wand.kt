@@ -1,8 +1,14 @@
 package com.example.harrypottercharacters.models
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "Wand")
 data class Wand(
-    val wood : String,
-    val core : String,
-    val length : String
+    @PrimaryKey
+    val id : Int,
+    val wood : String = "undefined",
+    val core : String = "undefined",
+    val length : String = "undefined"
 ) {
 }

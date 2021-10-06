@@ -3,10 +3,13 @@ package com.example.harrypottercharacters
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.example.harrypottercharacters.data.CharacterDatabase
+import com.example.harrypottercharacters.data.daos.CharacterDao
 import com.example.harrypottercharacters.interfaces.ApiRequest
 import com.example.harrypottercharacters.json.CharacterDeserializer
 import com.example.harrypottercharacters.models.Character
 import com.google.gson.GsonBuilder
+import org.w3c.dom.CharacterData
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -27,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
 		val api = retrofit.create(ApiRequest::class.java)
 
+		val db = CharacterDatabase.getInstance(this)
 
 		api.getAllCharacters().enqueue(object: Callback<List<Character>> {
 			override fun onResponse(
@@ -40,15 +44,17 @@ class MainActivity : AppCompatActivity() {
 
 					for(c : Character in response.body()!!) {
 						Log.d(TAG, c.wand.toString())
+
+						// Add character to database
+						db.DAO.insert(c)
 					}
 				}
 			}
-
 			override fun onFailure(call: Call<List<Character>>, t: Throwable) {
 				Log.e(TAG, "Error retrieving list")
 				t.printStackTrace()
 			}
-
 		})
+
 	}
 }

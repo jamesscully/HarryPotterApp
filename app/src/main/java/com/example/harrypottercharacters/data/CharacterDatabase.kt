@@ -4,15 +4,18 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.harrypottercharacters.data.converters.CharacterConverter
+import com.example.harrypottercharacters.data.converters.WandConverter
 import com.example.harrypottercharacters.data.daos.CharacterDao
+import com.example.harrypottercharacters.models.Character
+import com.example.harrypottercharacters.models.Wand
 
 @Database(
-    entities = [ Character::class ],
+    entities = [ Character::class, Wand::class ],
     version = 1,
-    exportSchema = true
 )
-
-
+@TypeConverters(CharacterConverter::class, WandConverter::class)
 abstract class CharacterDatabase : RoomDatabase() {
 
     abstract val DAO : CharacterDao
@@ -28,8 +31,9 @@ abstract class CharacterDatabase : RoomDatabase() {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         CharacterDatabase::class.java,
-                        "characters.db"
-                    ).allowMainThreadQueries()
+                        "characters"
+                    )
+                        .allowMainThreadQueries()
                         .build()
                 }
                 return instance
