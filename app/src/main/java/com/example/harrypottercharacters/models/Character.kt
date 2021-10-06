@@ -26,7 +26,6 @@ data class Character(
     var eyeColour : String,
     var hairColour : String,
 
-    @Embedded
     var wand : Wand,
     var patronus : String,
     var hogwardsStudent : Boolean,
