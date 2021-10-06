@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 				call: Call<List<Character>>,
 				response: Response<List<Character>>
 			) {
-				if (response?.body() == null) {
+				if (response.body() == null) {
 					Log.d(TAG, "No characters found!")
 				} else {
 					Log.d(TAG, "Characters found: ${response.body()!!.size}")
@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 			}
 
 			override fun onFailure(call: Call<List<Character>>, t: Throwable) {
-				TODO("Not yet implemented")
+				Log.e(TAG, "No response given, ${t.printStackTrace()}")
 			}
 
 		})
