@@ -3,9 +3,12 @@ package com.example.harrypottercharacters
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.harrypottercharacters.adapters.CharacterAdapter
 import com.example.harrypottercharacters.data.CharacterDatabase
 import com.example.harrypottercharacters.data.daos.CharacterDao
 import com.example.harrypottercharacters.interfaces.ApiRequest
@@ -24,10 +27,17 @@ class MainActivity : AppCompatActivity() {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_main)
 
+		val spinner = this.findViewById<Spinner>(R.id.characterSortBySpinner)
+		val spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.spinner_options, R.layout.support_simple_spinner_dropdown_item)
+		spinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
+		spinner.adapter = spinnerAdapter
+
 		val list = CharacterDatabase.getInstance(this).DAO.getAll()
 		val recycler = this.findViewById<RecyclerView>(R.id.characterRecyclerView)
-		recycler.layoutManager = LinearLayoutManager(this)
+		val adapter = CharacterAdapter(list.toMutableList())
 
+		recycler.layoutManager = LinearLayoutManager(this)
+		recycler.adapter = adapter
 
 
 	}
