@@ -1,4 +1,4 @@
-package com.example.harrypottercaracters
+package com.example.harrypottercharacters
 
 import org.junit.Test
 

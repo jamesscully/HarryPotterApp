@@ -1,4 +1,4 @@
-package com.example.harrypottercaracters
+package com.example.harrypottercharacters
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

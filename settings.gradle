@@ -1,2 +1,2 @@
-rootProject.name = "Harry Potter Caracters"
+rootProject.name = "Harry Potter Characters"
 include ':app'
