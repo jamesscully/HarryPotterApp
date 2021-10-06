@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 					Log.d(TAG, "Characters found: ${response.body()!!.size}")
 
 					for(c : Character in response.body()!!) {
-						Log.d(TAG, "Found character: ${c.name}, wand : ${c}")
+						Log.d(TAG, c.wand.toString())
 					}
 				}
 			}
