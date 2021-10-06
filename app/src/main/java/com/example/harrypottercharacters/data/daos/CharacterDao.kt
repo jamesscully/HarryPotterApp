@@ -14,5 +14,13 @@ interface CharacterDao {
     @Update
     fun update(character: Character)
 
+    @Query("SELECT * FROM Character")
+    fun getAll() : List<Character>
+
+    @Query("SELECT * FROM Character WHERE id = :id")
+    fun getById(id: Int) : Character
+
+    @Query("SELECT * FROM Character WHERE name = :name ")
+    fun getByName(name: String) : Character
 
 }
