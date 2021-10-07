@@ -33,7 +33,7 @@ class CharacterAdapter(var dataset: List<Character>) : RecyclerView.Adapter<Char
     }
 
     fun setData(dataset: List<Character>) {
-        data = dataset
+        data = dataset.sortedBy { character -> character.name }
         notifyDataSetChanged()
     }
 

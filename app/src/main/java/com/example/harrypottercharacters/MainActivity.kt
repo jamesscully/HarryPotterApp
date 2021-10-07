@@ -3,11 +3,13 @@ package com.example.harrypottercharacters
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.ArrayAdapter
-import android.widget.CompoundButton
-import android.widget.Spinner
+import android.view.View
+import android.widget.*
 import androidx.activity.viewModels
+import androidx.core.view.children
+import androidx.core.view.get
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.harrypottercharacters.adapters.CharacterAdapter
@@ -16,6 +18,9 @@ import com.example.harrypottercharacters.enums.FilterEnum
 import com.example.harrypottercharacters.models.Character
 import com.example.harrypottercharacters.viewmodels.MainActivityViewModel
 import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,15 +36,15 @@ class MainActivity : AppCompatActivity() {
 
 		setupChips()
 
-		// if we do not have a database, then generate it
-		if(!this.applicationContext.getDatabasePath("characters").exists()) {
-			CharacterDatabase.populateDatabase(this)
-		}
 
-		val spinner = this.findViewById<Spinner>(R.id.characterSortBySpinner)
-		val spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.spinner_options, R.layout.support_simple_spinner_dropdown_item)
-		spinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
-		spinner.adapter = spinnerAdapter
+		// if we do not have a database, then generate it
+		val context = applicationContext
+		val databaseExists = getDatabasePath("characters").exists()
+		lifecycleScope.launch(Dispatchers.IO) {
+			if(!databaseExists) {
+				CharacterDatabase.populateDatabase(context, (application as App).repo)
+			}
+		}
 
 		// we can start with an empty list
 		val list = emptyList<Character>()
@@ -48,13 +53,18 @@ class MainActivity : AppCompatActivity() {
 
 		// every time our characters changes, we load a new one into recyclerview
 		model.characters.observe(this, Observer { characters ->
+			adapter.setData(characters)
 
-			// organize list alphabetically; this is potentially an expensive operation,
-			// review
-			val sorted = characters.sortedWith( compareBy { c -> c.name } )
+			// Update UI with 'Found X results [for] (search type)
+			val textView = findViewById<TextView>(R.id.txt_search_info)
+			val filter : FilterEnum? = model.filter.value
+			var filterText : String = ""
 
-			Log.d(TAG, "Characters has changed")
-			adapter.setData(sorted)
+			if(filter != null && filter != FilterEnum.All) {
+				filterText = "for $filter"
+			}
+
+			textView.text = "Showing ${characters.size} results $filterText"
 		})
 
 		recycler.layoutManager = LinearLayoutManager(this)
@@ -62,32 +72,32 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	private fun generateOnCheckedChangeListener(filter : FilterEnum) : CompoundButton.OnCheckedChangeListener {
-		return CompoundButton.OnCheckedChangeListener { _, isChecked ->
+		return CompoundButton.OnCheckedChangeListener { button, isChecked ->
+			// Chips are contained within a single-selection group, thus if any call to this
+			// is 'not checked', then we display all.
 
-			// Chips are bound to a
 			if(isChecked)
 				model.setFilter(filter)
 			else
-				model.setFilter(FilterEnum.ALL)
+				model.setFilter(FilterEnum.All)
 		}
 	}
 
 
 	private fun setupChips() {
-		val slytherinChip = findViewById<Chip>(R.id.chip_slytherin)
-		val gryffindorChip = findViewById<Chip>(R.id.chip_gryffindor)
-		val ravenclawChip = findViewById<Chip>(R.id.chip_ravenclaw)
-		val hufflepuffChip = findViewById<Chip>(R.id.chip_hufflepuff)
+		val chipGroup = findViewById<ChipGroup>(R.id.filter_chip_group)
 
-		val studentChip = findViewById<Chip>(R.id.chip_student)
-		val staffChip = findViewById<Chip>(R.id.chip_staff)
+		chipGroup.setOnCheckedChangeListener { group, checkedId ->
+			// if nothing selected, revert to default 'ALL' and return
+			if(group.checkedChipIds.isEmpty()) {
+				model.setFilter(FilterEnum.All)
+				return@setOnCheckedChangeListener
+			}
 
-		slytherinChip.setOnCheckedChangeListener(generateOnCheckedChangeListener(FilterEnum.SLYTHERIN))
-		gryffindorChip.setOnCheckedChangeListener(generateOnCheckedChangeListener(FilterEnum.GRYFFINDOR))
-		ravenclawChip.setOnCheckedChangeListener(generateOnCheckedChangeListener(FilterEnum.RAVENCLAW))
-		hufflepuffChip.setOnCheckedChangeListener(generateOnCheckedChangeListener(FilterEnum.HUFFLEPUFF))
+			val chip = chipGroup.findViewById<Chip>(checkedId)
+			val filter = FilterEnum.valueOf(chip.tag as String)
 
-		studentChip.setOnCheckedChangeListener(generateOnCheckedChangeListener(FilterEnum.STUDENT))
-		staffChip.setOnCheckedChangeListener(generateOnCheckedChangeListener(FilterEnum.STAFF))
+			model.setFilter(filter)
+		}
 	}
 }

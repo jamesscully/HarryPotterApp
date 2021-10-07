@@ -10,8 +10,9 @@ class MainActivityViewModel(private val repo: CharacterRepository) : ViewModel()
     val TAG = "MainActivityViewModel"
 
     private val _response = MutableLiveData<List<Character>>()
-    private val _filter = MutableLiveData<FilterEnum>()
+    val filter = MutableLiveData<FilterEnum>()
 
+    // reflection for Mutable _response
     val characters : LiveData<List<Character>>
         get() = _response
 
@@ -22,28 +23,33 @@ class MainActivityViewModel(private val repo: CharacterRepository) : ViewModel()
 
     // Exposed method for setting our needed filter
     fun setFilter(filter : FilterEnum) {
-        _filter.value = filter
+        this.filter.value = filter
         handleFilter()
     }
 
     // Executes the API requests for each type of filter
     private fun handleFilter() {
-        when(_filter.value) {
-            FilterEnum.STAFF -> getAllStaff()
-            FilterEnum.STUDENT -> getAllStudents()
-            FilterEnum.GRYFFINDOR -> getByHouse("Gryffindor")
-            FilterEnum.RAVENCLAW -> getByHouse("Ravenclaw")
-            FilterEnum.HUFFLEPUFF -> getByHouse("Hufflepuff")
-            FilterEnum.SLYTHERIN -> getByHouse("Slytherin")
+        when(filter.value) {
+            FilterEnum.Staff -> getAllStaff()
+            FilterEnum.Student -> getAllStudents()
+            FilterEnum.Gryffindor -> getByHouse("Gryffindor")
+            FilterEnum.Ravenclaw -> getByHouse("Ravenclaw")
+            FilterEnum.Hufflepuff -> getByHouse("Hufflepuff")
+            FilterEnum.Slytherin -> getByHouse("Slytherin")
             else -> getAllCharacters()
         }
     }
 
+    // Generic function to handle getting our data from repo
+    private fun handleResponseData(func: suspend () -> List<Character>) = viewModelScope.launch {
+        _response.postValue(func())
+    }
+
     // routines to handle getting each type of data
-    private fun getAllCharacters()          = viewModelScope.launch { _response.postValue(repo.getAllCharacters()) }
-    private fun getAllStaff()               = viewModelScope.launch { _response.postValue(repo.getAllStaffResponse()) }
-    private fun getAllStudents()            = viewModelScope.launch { _response.postValue(repo.getAllStudentsResponse()) }
-    private fun getByHouse(house : String)  = viewModelScope.launch { _response.postValue(repo.getAllByHouseResponse(house)) }
+    private fun getAllCharacters() = handleResponseData { repo.getAllCharacters() }
+    private fun getAllStaff()      = handleResponseData { repo.getAllStaffResponse() }
+    private fun getAllStudents()   = handleResponseData { repo.getAllStudentsResponse() }
+    private fun getByHouse(house : String) = handleResponseData { repo.getAllByHouseResponse(house) }
 
     class MainActivityViewModelFactory(private val repository: CharacterRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {

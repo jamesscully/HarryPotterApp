@@ -10,6 +10,7 @@ import com.example.harrypottercharacters.data.converters.WandConverter
 import com.example.harrypottercharacters.data.daos.CharacterDao
 import com.example.harrypottercharacters.models.Character
 import com.example.harrypottercharacters.models.Wand
+import kotlinx.coroutines.coroutineScope
 
 @Database(
     entities = [ Character::class, Wand::class ],
@@ -40,33 +41,14 @@ abstract class CharacterDatabase : RoomDatabase() {
             }
         }
 
-        fun populateDatabase(context: Context) {
-
-            // todo convert this to more elegant method
-
-//            api.getAllCharacters().enqueue(object: retrofit2.Callback<List<Character>> {
-//                override fun onResponse(
-//                    call: Call<List<Character>>,
-//                    response: Response<List<Character>>
-//                ) {
-//                    if (response.body() == null) {
-//                        Log.d(TAG, "No characters found!")
-//                    } else {
-//                        Log.d(TAG, "Characters found: ${response.body()!!.size}")
-//
-//                        for(c : Character in response.body()!!) {
-//                            Log.d(TAG, c.wand.toString())
-//
-//                            // Add character to database
-//                            db.DAO.insert(c)
-//                        }
-//                    }
-//                }
-//                override fun onFailure(call: Call<List<Character>>, t: Throwable) {
-//                    Log.e(TAG, "Error retrieving list")
-//                    t.printStackTrace()
-//                }
-//            })
+        suspend fun populateDatabase(context: Context, repository: CharacterRepository) {
+            coroutineScope {
+                val characters = repository.getAllCharacters()
+                val db = CharacterDatabase.getInstance(context)
+                characters.forEach { character ->
+                    db.DAO.insert(character)
+                }
+            }
         }
 
     }
