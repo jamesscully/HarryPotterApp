@@ -19,6 +19,7 @@ data class Character(
     var gender : String,
     var house : String,
     var dateOfBirth : String,
+    // Same as alternate_names but with int/string
     @Transient
     var yearOfBirth : Int,
     var wizard : Boolean,
