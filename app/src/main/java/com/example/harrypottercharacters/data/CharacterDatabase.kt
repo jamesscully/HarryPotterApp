@@ -30,7 +30,6 @@ abstract class CharacterDatabase : RoomDatabase() {
 
     abstract val DAO : CharacterDao
 
-
     companion object {
         val TAG = "CharacterDatabase"
 
@@ -45,7 +44,6 @@ abstract class CharacterDatabase : RoomDatabase() {
                         CharacterDatabase::class.java,
                         "characters"
                     )
-                        .allowMainThreadQueries()
                         .build()
                 }
                 return instance
