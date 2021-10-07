@@ -32,14 +32,6 @@ class CharacterAdapter(var dataset : MutableList<Character>) : RecyclerView.Adap
         return data.size
     }
 
-    fun sortByAlpha(asc : Boolean) {
-//        val comparator = Comparator { c1: Character, c2 : Character ->   }
-
-        data.sortedWith(compareBy { it.name })
-        notifyDataSetChanged()
-    }
-
-
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name = itemView.findViewById<TextView>(R.id.char_recycler_name)
     }

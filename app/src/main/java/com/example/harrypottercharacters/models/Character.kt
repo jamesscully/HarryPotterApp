@@ -28,8 +28,8 @@ data class Character(
 
     var wand : Wand,
     var patronus : String,
-    var hogwardsStudent : Boolean,
-    var hogwardsStaff : Boolean,
+    var hogwartsStudent : Boolean,
+    var hogwartsStaff : Boolean,
     var actor : String,
 
     var alternate_actors : List<String>,
@@ -37,7 +37,26 @@ data class Character(
     var image : String
     ) {
 
-    constructor() : this(0, "undefined", mutableListOf(), "undefined", "undefined", "undefined", "undefined", 0, false, "undefined", "undefined", "undefined", Wand(0, "undefined", "undefined","undefined"), "undefined", false, false, "undefined", emptyList(), false, "undefined") {
+    constructor() : this(0,
+        "undefined",
+        mutableListOf(),
+        "undefined",
+        "undefined",
+        "undefined",
+        "undefined",
+        0,
+        false,
+        "undefined",
+        "undefined",
+        "undefined",
+        Wand(0, "undefined", "undefined","undefined"),
+        "undefined",
+        false,
+        false,
+        "undefined",
+        emptyList(),
+        false,
+        "undefined") {
 
     }
 
