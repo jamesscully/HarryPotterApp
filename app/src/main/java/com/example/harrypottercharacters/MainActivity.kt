@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.harrypottercharacters.adapters.CharacterAdapter
 import com.example.harrypottercharacters.data.CharacterDatabase
+import com.example.harrypottercharacters.enums.FilterEnum
 import com.example.harrypottercharacters.models.Character
 import com.example.harrypottercharacters.viewmodels.MainActivityViewModel
 import com.google.android.material.chip.Chip
@@ -60,31 +61,33 @@ class MainActivity : AppCompatActivity() {
 		recycler.adapter = adapter
 	}
 
-//	private fun generateOnCheckedChangeListener(term : String) : CompoundButton.OnCheckedChangeListener {
-//		return CompoundButton.OnCheckedChangeListener { _, isChecked ->
-//			if(isChecked)
-//				model.houseFilter.value = term
-//			else
-//				model.houseFilter.value = ""
-//		}
-//	}
+	private fun generateOnCheckedChangeListener(filter : FilterEnum) : CompoundButton.OnCheckedChangeListener {
+		return CompoundButton.OnCheckedChangeListener { _, isChecked ->
+
+			// Chips are bound to a
+			if(isChecked)
+				model.setFilter(filter)
+			else
+				model.setFilter(FilterEnum.ALL)
+		}
+	}
 
 
 	private fun setupChips() {
-//		val slytherinChip = findViewById<Chip>(R.id.chip_slytherin)
-//		val gryffindorChip = findViewById<Chip>(R.id.chip_gryffindor)
-//		val ravenclawChip = findViewById<Chip>(R.id.chip_ravenclaw)
-//		val hufflepuffChip = findViewById<Chip>(R.id.chip_hufflepuff)
-//
-//		val studentChip = findViewById<Chip>(R.id.chip_student)
-//		val staffChip = findViewById<Chip>(R.id.chip_staff)
-//
-//		slytherinChip.setOnCheckedChangeListener(generateOnCheckedChangeListener("Slytherin"))
-//		gryffindorChip.setOnCheckedChangeListener(generateOnCheckedChangeListener("Gryffindor"))
-//		ravenclawChip.setOnCheckedChangeListener(generateOnCheckedChangeListener("Ravenclaw"))
-//		hufflepuffChip.setOnCheckedChangeListener(generateOnCheckedChangeListener("Hufflepuff"))
-//
-//		studentChip.setOnCheckedChangeListener(generateOnCheckedChangeListener("student"))
-//		staffChip.setOnCheckedChangeListener(generateOnCheckedChangeListener("staff"))
+		val slytherinChip = findViewById<Chip>(R.id.chip_slytherin)
+		val gryffindorChip = findViewById<Chip>(R.id.chip_gryffindor)
+		val ravenclawChip = findViewById<Chip>(R.id.chip_ravenclaw)
+		val hufflepuffChip = findViewById<Chip>(R.id.chip_hufflepuff)
+
+		val studentChip = findViewById<Chip>(R.id.chip_student)
+		val staffChip = findViewById<Chip>(R.id.chip_staff)
+
+		slytherinChip.setOnCheckedChangeListener(generateOnCheckedChangeListener(FilterEnum.SLYTHERIN))
+		gryffindorChip.setOnCheckedChangeListener(generateOnCheckedChangeListener(FilterEnum.GRYFFINDOR))
+		ravenclawChip.setOnCheckedChangeListener(generateOnCheckedChangeListener(FilterEnum.RAVENCLAW))
+		hufflepuffChip.setOnCheckedChangeListener(generateOnCheckedChangeListener(FilterEnum.HUFFLEPUFF))
+
+		studentChip.setOnCheckedChangeListener(generateOnCheckedChangeListener(FilterEnum.STUDENT))
+		staffChip.setOnCheckedChangeListener(generateOnCheckedChangeListener(FilterEnum.STAFF))
 	}
 }
