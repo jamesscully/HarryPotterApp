@@ -2,6 +2,7 @@ package com.example.harrypottercharacters
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.CompoundButton
 import android.widget.Spinner
@@ -46,7 +47,13 @@ class MainActivity : AppCompatActivity() {
 
 		// every time our characters changes, we load a new one into recyclerview
 		model.characters.observe(this, Observer { characters ->
-			adapter.setData(characters)
+
+			// organize list alphabetically; this is potentially an expensive operation,
+			// review
+			val sorted = characters.sortedWith( compareBy { c -> c.name } )
+
+			Log.d(TAG, "Characters has changed")
+			adapter.setData(sorted)
 		})
 
 		recycler.layoutManager = LinearLayoutManager(this)

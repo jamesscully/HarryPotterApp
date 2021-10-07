@@ -1,11 +1,12 @@
 package com.example.harrypottercharacters.data
 
 import com.example.harrypottercharacters.data.daos.CharacterDao
-import com.example.harrypottercharacters.models.Character
-import kotlinx.coroutines.flow.Flow
 
+// charDao is used to interface with the Room database, providing second source of data
 class CharacterRepository(private val charDao : CharacterDao) {
 
-    val allCharacters : Flow<List<Character>> = charDao.getAll()
-
+    suspend fun getAllCharacters() = ApiService.getAllCharacters()
+    suspend fun getAllStaffResponse() = ApiService.getAllStaff()
+    suspend fun getAllStudentsResponse() = ApiService.getAllStudents()
+    suspend fun getAllByHouseResponse(house : String) = ApiService.getAllHouse(house)
 }
