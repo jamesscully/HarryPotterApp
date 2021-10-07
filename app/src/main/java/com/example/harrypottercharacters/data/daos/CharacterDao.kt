@@ -1,5 +1,6 @@
 package com.example.harrypottercharacters.data.daos
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.harrypottercharacters.models.Character
 
@@ -14,7 +15,7 @@ interface CharacterDao {
     @Update
     fun update(character: Character)
 
-    @Query("SELECT * FROM Character")
+    @Query("SELECT * FROM Character ORDER BY Name ASC")
     fun getAll() : List<Character>
 
     @Query("SELECT * FROM Character WHERE id = :id")

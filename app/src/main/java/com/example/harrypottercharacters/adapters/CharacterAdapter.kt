@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.harrypottercharacters.R
 import com.example.harrypottercharacters.models.Character
 
-class CharacterAdapter(var dataset : MutableList<Character>) : RecyclerView.Adapter<CharacterAdapter.ViewHolder>() {
+class CharacterAdapter(var dataset: List<Character>) : RecyclerView.Adapter<CharacterAdapter.ViewHolder>() {
 
-    private val data : MutableList<Character> = dataset
+    private var data : List<Character> = dataset
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val context = parent.context
@@ -30,6 +30,11 @@ class CharacterAdapter(var dataset : MutableList<Character>) : RecyclerView.Adap
 
     override fun getItemCount(): Int {
         return data.size
+    }
+
+    fun setData(dataset: List<Character>) {
+        data = dataset
+        notifyDataSetChanged()
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
