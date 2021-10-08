@@ -33,7 +33,7 @@ abstract class CharacterDatabase : RoomDatabase() {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         CharacterDatabase::class.java,
-                        "characters"
+                        "characters.db"
                     )
                         .build()
                 }
