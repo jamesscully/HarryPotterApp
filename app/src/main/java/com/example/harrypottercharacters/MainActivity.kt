@@ -10,6 +10,7 @@ import androidx.core.view.children
 import androidx.core.view.get
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.harrypottercharacters.adapters.CharacterAdapter
@@ -21,6 +22,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,12 +41,15 @@ class MainActivity : AppCompatActivity() {
 
 		// if we do not have a database, then generate it
 		val context = applicationContext
-		val databaseExists = getDatabasePath("characters").exists()
-		lifecycleScope.launch(Dispatchers.IO) {
-			if(!databaseExists) {
-				CharacterDatabase.populateDatabase(context, (application as App).repo)
+		val databaseExists =  getDatabasePath("characters").exists()
+
+		lifecycleScope.launchWhenStarted {
+			withContext(Dispatchers.IO) {
+				if(!databaseExists)
+					CharacterDatabase.populateDatabase(context, (application as App).repo)
 			}
 		}
+
 
 		// we can start with an empty list
 		val list = emptyList<Character>()
@@ -71,19 +76,6 @@ class MainActivity : AppCompatActivity() {
 		recycler.adapter = adapter
 	}
 
-	private fun generateOnCheckedChangeListener(filter : FilterEnum) : CompoundButton.OnCheckedChangeListener {
-		return CompoundButton.OnCheckedChangeListener { button, isChecked ->
-			// Chips are contained within a single-selection group, thus if any call to this
-			// is 'not checked', then we display all.
-
-			if(isChecked)
-				model.setFilter(filter)
-			else
-				model.setFilter(FilterEnum.All)
-		}
-	}
-
-
 	private fun setupChips() {
 		val chipGroup = findViewById<ChipGroup>(R.id.filter_chip_group)
 
@@ -95,6 +87,13 @@ class MainActivity : AppCompatActivity() {
 			}
 
 			val chip = chipGroup.findViewById<Chip>(checkedId)
+
+			// incase we've forgotten a tag on a view
+			if(chip.tag == null) {
+				Log.e(TAG, "Attempt to retrieve null tag (from chip/filter)")
+				return@setOnCheckedChangeListener
+			}
+
 			val filter = FilterEnum.valueOf(chip.tag as String)
 
 			model.setFilter(filter)

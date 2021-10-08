@@ -41,6 +41,7 @@ abstract class CharacterDatabase : RoomDatabase() {
             }
         }
 
+        // should only be called when we want to populate
         suspend fun populateDatabase(context: Context, repository: CharacterRepository) {
             coroutineScope {
                 val characters = repository.getAllCharacters()

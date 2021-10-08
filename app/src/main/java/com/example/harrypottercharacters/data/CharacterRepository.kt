@@ -16,12 +16,10 @@ class CharacterRepository(private val charDao : CharacterDao) {
     suspend fun handleResponse(response: Response<List<Character>>) : Pair<List<Character>, Int> {
         var list = emptyList<Character>()
 
-        coroutineScope {
-            if(response.isSuccessful || response.body() != null) {
-                list = response.body()!!
-            } else {
-                Log.e(TAG, "Error parsing response, code: ${response.code()}")
-            }
+        if(response.isSuccessful || response.body() != null) {
+            list = response.body()!!
+        } else {
+            Log.e(TAG, "Error parsing response, code: ${response.code()}")
         }
 
         return Pair(list, response.code())
